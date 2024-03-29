@@ -1,6 +1,7 @@
 from yandex_tracker_client import TrackerClient
 import configparser
 import argparse
+from prettytable import PrettyTable, MARKDOWN
 
 
 def read_config(filename):
@@ -14,10 +15,14 @@ def read_config(filename):
 def dupe_sprint(client, sprint_name):
     request = f'Sprint: "{sprint_name}" "Sort by":Project ASC'
     issues = client.issues.find(query=request)
-    print(f'{sprint_name}')
-
-    for issue in issues:
-        print(issue.key, issue.project.name if issue.project is not None else '-')
+    print(f'# {sprint_name}\n')
+    table = PrettyTable()
+    table.field_names = ['Project', 'Issue', 'Report']
+    table.add_rows([[issue.project.name if issue.project is not None else '-', issue.key, '']
+                  for issue in issues])
+    table.align = 'l'
+    table.set_style(MARKDOWN)
+    print(table)
 
 
 def main():
