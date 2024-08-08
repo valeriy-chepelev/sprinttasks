@@ -1,7 +1,8 @@
 from yandex_tracker_client import TrackerClient
 import configparser
 import argparse
-from prettytable import PrettyTable, MARKDOWN
+from prettytable import PrettyTable, MARKDOWN, DEFAULT
+import pyperclip
 
 
 def read_config(filename):
@@ -17,11 +18,17 @@ def dupe_sprint(client, sprint_name):
     issues = client.issues.find(query=request)
     print(f'# {sprint_name}\n')
     table = PrettyTable()
-    table.field_names = ['Project', 'Issue', 'Report']
-    table.add_rows([[issue.project.name if issue.project is not None else '-', issue.key, '']
-                  for issue in issues])
+    table.field_names = ['Project', 'Issue', 'Summary', 'Assignee', 'Report']
+    table.add_rows([[issue.project.name if issue.project is not None else '-',
+                     issue.key,
+                     issue.summary,
+                     issue.assignee.display,
+                     '']
+                    for issue in issues])
     table.align = 'l'
     table.set_style(MARKDOWN)
+    pyperclip.copy(table.get_formatted_string())
+    table.set_style(DEFAULT)
     print(table)
 
 
@@ -35,6 +42,7 @@ def main():
                         help='sprint name')
     args = parser.parse_args()
     dupe_sprint(client, args.sprint)
+    print('Markdown copied to system clipboard.')
 
 
 if __name__ == '__main__':
