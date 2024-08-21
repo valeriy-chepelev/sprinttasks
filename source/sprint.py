@@ -16,7 +16,7 @@ def read_config(filename):
 def dupe_sprint(client, sprint_name):
     request = f'Sprint: "{sprint_name}" "Sort by":Project ASC'
     issues = client.issues.find(query=request)
-    print(f'# {sprint_name}\n')
+    print(sprint_name)
     table = PrettyTable()
     table.field_names = ['Project', 'Issue', 'Summary', 'Assignee', 'Report']
     table.add_rows([[issue.project.name if issue.project is not None else '-',
@@ -27,7 +27,7 @@ def dupe_sprint(client, sprint_name):
                     for issue in issues])
     table.align = 'l'
     table.set_style(MARKDOWN)
-    pyperclip.copy(table.get_formatted_string())
+    pyperclip.copy(f'# {sprint_name}\n' + table.get_formatted_string())
     table.set_style(DEFAULT)
     print(table)
 
