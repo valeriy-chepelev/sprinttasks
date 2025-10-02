@@ -1,7 +1,7 @@
 from yandex_tracker_client import TrackerClient
 import configparser
 import argparse
-from prettytable import PrettyTable, MARKDOWN, DEFAULT
+from prettytable import PrettyTable, TableStyle
 import pyperclip
 
 
@@ -26,9 +26,9 @@ def dupe_sprint(client, sprint_name):
                      '']
                     for issue in issues])
     table.align = 'l'
-    table.set_style(MARKDOWN)
+    table.set_style(TableStyle.MARKDOWN)
     pyperclip.copy(f'# {sprint_name}\n' + table.get_formatted_string())
-    table.set_style(DEFAULT)
+    table.set_style(TableStyle.DEFAULT)
     print(table)
 
 
