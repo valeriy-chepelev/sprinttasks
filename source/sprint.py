@@ -33,8 +33,11 @@ def dupe_sprint(client, sprint_name):
 
 
 def main():
-    cfg = read_config('sprint.ini')
-    client = TrackerClient(cfg['token'], cfg['org'])
+    creds = read_config('sprint.ini')
+    if len(creds['org']) < 15:  # Yes, a magic number! cloud_org_id usually have length 20
+        client = TrackerClient(token=creds['token'], org_id=creds['org'])
+    else:
+        client = TrackerClient(token=creds['token'], cloud_org_id=creds['org'])
     if client.myself is None:
         raise Exception('Unable to connect Yandex Tracker.')
     parser = argparse.ArgumentParser(description='Sprint task dumper by VCh.')
