@@ -41,20 +41,20 @@ def dupe_sprint(client, sprint_name, ranks):
     print(sprint_name)
     table = PrettyTable()
     table.field_names = ['Project', 'Rank', 'Issue', 'Summary', 'Assignee', 'Report']
-    table.add_rows([[issue.project.name if issue.project is not None else '-',
-                     0 if issue.project.name not in ranks or
-                            ranks[issue.project.name] is None
-                     else ranks[issue.project.name],
-                     issue.key,
-                     issue.summary,
-                     issue.assignee.display,
-                     '']
-                    for issue in issues])
+    rows = []
+    for issue in issues:
+        pname = issue.project.name if issue.project is not None else '-'
+        prank = 0 if pname not in ranks or ranks[pname] is None else ranks[pname]
+        rows.append([pname, prank,
+                     issue.key, issue.summary, issue.assignee.display,
+                     ''])
+    table.add_rows(rows)
     table.align = 'l'
     table.sortby = 'Rank'
     table.reversesort = True
     table.set_style(TableStyle.MARKDOWN)
-    pyperclip.copy(f'# {sprint_name}\n' + table.get_formatted_string(fields=['Project', 'Issue', 'Summary', 'Assignee', 'Report']))
+    pyperclip.copy(f'# {sprint_name}\n' + table.get_formatted_string(
+        fields=['Project', 'Issue', 'Summary', 'Assignee', 'Report']))
     table.set_style(TableStyle.DEFAULT)
     print(table)
 
